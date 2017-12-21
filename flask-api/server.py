@@ -2,7 +2,7 @@ import os
 import pandas as pd
 from sklearn.externals import joblib
 from flask import Flask, jsonify, request
-import pickle
+import dill as pickle
 
 app = Flask(__name__)
 
@@ -15,7 +15,8 @@ def apicall():
 		test_json = request.get_json()
 		test = pd.read_json(test_json, orient='records')
 
-		# To resolve the issue of TypeError: CAnnot compare types 'ndarray(dtype=int64)' and 'str'
+		# To resolve the issue of TypeError: CAnnot compare types 
+		# 'ndarray(dtype=int64)' and 'str'
 		test['Dependents'] = [str(x) for x in list(test['Dependents'])]
 
 		# Getting the Load_IDs separated out
@@ -33,6 +34,7 @@ def apicall():
 		print('Loading the model...')
 		loaded_model = None
 		with open('./models/' + clf, 'rb') as f:
+			print(f)
 			loaded_model = pickle.load(f)
 
 		print('The model has been loaded... doing predicions now...')
@@ -49,7 +51,17 @@ def apicall():
 		"""We can be as creative in sending the responses.
 		   But we need to send the response codes as well.
 		"""
-		responses = jsonify(predictions=final_predictions.to_json(orient='records'))
-		responses.status_code = 200
+		resp = jsonify(predictions=final_predictions.to_json(orient='records'))
+		resp.status_code = 200
 
-		return responses
+		return resp
+
+
+@app.errorhandler(400)
+def bad_request(error=None):
+	message = {
+		'status': 400,
+		'message': 'Bad Request: ' + request.url + '--> Please check your data payload...',
+	}
+	resp = jsonify(message)
+	resp.status_code = 400

@@ -9,22 +9,21 @@ header = {
 }
 
 # Reading test batch
-
 df = pd.read_csv('../data/test.csv')
-
+df = df.head()
 # Convertin to json
 data = df.to_json(orient='records')
 
-# print(data)
+print(data)
 
 # POST <url>/predict
 
-response = requests.post(
+resp = requests.post(
 	'http://0.0.0.0:8000/predict',
 	data=json.dumps(data),
 	headers=header
 	)
-print(response.status_code)
+print(resp.status_code)
 
 # The final response:
-print(response.json())
+print(resp.json())
