@@ -25,7 +25,7 @@ def apicall():
 	except Exception as e:
 		raise e
 
-	clf = 'model_v1.pk'
+	clf = 'model_v2.pk'
 
 	if test.empty:
 		return(bad_request())

@@ -14,10 +14,8 @@ df = df.head()
 # Convertin to json
 data = df.to_json(orient='records')
 
-print(data)
 
 # POST <url>/predict
-
 resp = requests.post(
 	'http://0.0.0.0:8000/predict',
 	data=json.dumps(data),
